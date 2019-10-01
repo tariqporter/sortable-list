@@ -1,6 +1,6 @@
 {
   "name": "@react-tic/sortable-list",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A react component for re-ordering lists",
   "keywords": [
     "react",
@@ -9,7 +9,7 @@
     "reorder",
     "drag"
   ],
-  "main": "src/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "prepublish": "npm run eslint && npm run build && npm run dist && npm run release",
     "publish": "npm publish --access public",
