@@ -1,0 +1,58 @@
+{
+  "name": "@react-tic/sortable-list",
+  "version": "1.0.0",
+  "description": "A react component for re-ordering lists",
+  "keywords": [
+    "react",
+    "react-component",
+    "sortable",
+    "reorder",
+    "drag"
+  ],
+  "main": "src/index.js",
+  "scripts": {
+    "prepublish": "npm run eslint && npm run build && npm run dist && npm run release",
+    "publish": "npm publish --access public",
+    "eslint": "eslint ./src",
+    "build": "babel --out-dir ./lib ./src",
+    "dist": "webpack-cli; BUILD_ENV=dist webpack-cli",
+    "release": "mkdir -p releases; cp -f dist/react-sortable-list.js releases/react-sortable-list-${npm_package_version}.js; cp -f dist/react-sortable-list.min.js releases/react-sortable-list-${npm_package_version}.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tariqporter/sortable-list.git"
+  },
+  "author": "Tariq Porter <tic084@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tariqporter/sortable-list/issues"
+  },
+  "homepage": "https://github.com/tariqporter/sortable-list",
+  "dependencies": {
+    "clsx": "1.0.4",
+    "jss": "10.0.0",
+    "prop-types": "^15.7.2",
+    "react-draggable": "4.0.3",
+    "react-jss": "10.0.0",
+    "react-scripts": "3.0.1",
+    "react-virtualized": "9.21.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/polyfill": "^7.6.0",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.6.2",
+    "eslint-config-airbnb": "^18.0.1",
+    "react": "16.8.6",
+    "terser-webpack-plugin": "^2.1.2",
+    "typescript": "3.3.3",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.6",
+    "react-dom": ">=16.8.6"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "comma-dangle": ["error", "never"],
+    "react/jsx-curly-newline": { "multiline": "consistent" },
+    "react/state-in-constructor": [ "enabled" ],
+    "react/static-property-placement": [ "enabled" ],
+    "react/jsx-props-no-spreading": [ "enabled" ]
+  }
+}
