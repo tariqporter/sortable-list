@@ -94,7 +94,9 @@ const SortablisList = ({
       setDragId(id);
       updateRow(id, row);
       const { width } = containerRef.getBoundingClientRect();
-      setShadowStyle({ ...shadowStyle, width, top: index * rowHeight });
+      setShadowStyle({
+        ...shadowStyle, width, top: index * rowHeight, height: rowHeight
+      });
     },
     [containerRef, rowData, rowHeight, shadowStyle, updateRow]
   );
@@ -161,6 +163,7 @@ const SortablisList = ({
       oldIndex,
       newIndex: rowData[transitionId].index
     });
+    setShadowStyle({ ...shadowStyle, height: 0 });
     setTransitionId(null);
     setOldIndex(null);
   };
