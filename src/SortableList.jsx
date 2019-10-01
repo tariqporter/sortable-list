@@ -50,8 +50,8 @@ DefaultDragHandle.propTypes = {
 };
 
 const SortablisList = ({
-  children,
-  classes = {},
+  children = [],
+  classes = '',
   rowHeight,
   onReorder = () => { },
   dragHandle: DragHandle = DefaultDragHandle
@@ -213,11 +213,11 @@ SortablisList.propTypes = {
   children: PropTypes.oneOfType([
     PropTypes.arrayOf(PropTypes.node),
     PropTypes.node
-  ]).isRequired,
-  classes: PropTypes.string.isRequired,
+  ]),
+  classes: PropTypes.shape({}),
   rowHeight: PropTypes.number.isRequired,
-  onReorder: PropTypes.func.isRequired,
-  dragHandle: PropTypes.node.isRequired
+  onReorder: PropTypes.func,
+  dragHandle: PropTypes.node
 };
 
 export default SortablisList;
