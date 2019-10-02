@@ -41,6 +41,9 @@ const useStyles = createUseStyles({
   shadow: {
     background: 'rgba(255, 0, 0, .35)',
     position: 'absolute'
+  },
+  contentContainer: {
+    flex: '1 1 auto'
   }
 });
 
@@ -198,7 +201,7 @@ const SortablisList = ({
               ref={setContainerRef}
               onTransitionEnd={(e) => id === transitionId && onTransitionEnd(e)}
             >
-              {child}
+              <div className={c.contentContainer}>{child}</div>
               <DragHandle
                 classes={clsx('draggable_handle', classes.handle)}
                 isDragging={id === dragId}
