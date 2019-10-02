@@ -64,7 +64,7 @@ const SortablisList = ({
   const [oldIndex, setOldIndex] = useState(null);
   const [shadowStyle, setShadowStyle] = useState({ height: rowHeight, top: 0 });
   const [componentIds] = useState(
-    React.Children.toArray(children).map((child) => child.props.id)
+    React.Children.map(children, (child) => child.key)
   );
   const [rowData, setRowData] = useState(
     componentIds.reduce((acc, id, index) => {
@@ -174,7 +174,7 @@ const SortablisList = ({
     <>
       <div className={clsx(c.shadow, classes.shadow)} style={shadowStyle} />
       {React.Children.map(children, (child) => {
-        const { id } = child.props;
+        const id = child.key;
         return (
           <DraggableCore
             handle=".draggable_handle"
