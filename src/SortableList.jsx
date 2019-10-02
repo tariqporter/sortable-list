@@ -158,6 +158,7 @@ const SortablisList = ({
       updateRow(dragId, row);
       setTransitionId(dragId);
       setDragId(null);
+      setShadowStyle({ ...shadowStyle, height: 0 });
     },
     [dragId, rowData, rowHeight, updateRow]
   );
