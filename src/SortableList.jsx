@@ -200,7 +200,7 @@ const SortablisList = ({
             >
               {child}
               <DragHandle
-                classes="draggable_handle"
+                classes={clsx('draggable_handle', classes.handle)}
                 isDragging={id === dragId}
                 className={clsx(
                   'draggable_handle',
@@ -227,7 +227,7 @@ SortablisList.propTypes = {
   classes: PropTypes.shape({}),
   rowHeight: PropTypes.number.isRequired,
   onReorder: PropTypes.func,
-  dragHandle: PropTypes.node
+  dragHandle: PropTypes.func
 };
 
 export default SortablisList;
