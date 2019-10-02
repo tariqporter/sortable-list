@@ -158,15 +158,17 @@ const SortablisList = ({
     [dragId, rowData, rowHeight, updateRow]
   );
 
-  const onTransitionEnd = (e) => {
-    onReorder(e.nativeEvent, {
-      oldIndex,
-      newIndex: rowData[transitionId].index
-    });
-    setShadowStyle({ ...shadowStyle, height: 0 });
-    setTransitionId(null);
-    setOldIndex(null);
-  };
+  const onTransitionEnd = useCallback(
+    (e) => {
+      onReorder(e.nativeEvent, {
+        oldIndex,
+        newIndex: rowData[transitionId].index
+      });
+      setTransitionId(null);
+      setOldIndex(null);
+    },
+    [oldIndex, onReorder, rowData, transitionId]
+  );
 
   return (
     <>
