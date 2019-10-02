@@ -1,8 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { createUseStyles } from 'react-jss';
+import { jss, createUseStyles } from 'react-jss';
 import { DraggableCore } from 'react-draggable';
 import clsx from 'clsx';
+
+jss.setup({
+  insertionPoint: document.head.firstChild
+});
 
 const useStyles = createUseStyles({
   root: {
