@@ -67,7 +67,7 @@ const SortablisList = ({
         id,
         index,
         style: {
-          top: 0
+          // top
           // position
           // transition
         }
@@ -79,7 +79,12 @@ const SortablisList = ({
   useEffect(() => {
     if (transitionId === null) {
       Object.keys(rowData).forEach((k) => {
-        const { transition, position, ...style } = rowData[k].style;
+        const {
+          transition,
+          position,
+          top,
+          ...style
+        } = rowData[k].style;
         rowData[k].style = style;
       });
       setRowData({ ...rowData });
