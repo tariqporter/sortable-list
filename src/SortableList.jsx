@@ -67,7 +67,7 @@ const SortablisList = ({
         id,
         index,
         style: {
-          // top
+          top: 0
           // position
           // transition
         }
@@ -85,6 +85,7 @@ const SortablisList = ({
           top,
           ...style
         } = rowData[k].style;
+        style.top = 0;
         rowData[k].style = style;
       });
       setRowData({ ...rowData });
