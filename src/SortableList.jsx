@@ -171,10 +171,10 @@ const SortablisList = ({
         const firstHeightComparison = dragRowHeight > firstRowHeight ? firstRowHeight : dragRowHeight;
         const lastHeightComparison = dragRowHeight > lastRowHeight ? lastRowHeight : dragRowHeight;
 
-        if (dragRowBottom < firstRowBottom - firstHeightComparison / 2) {
+        if (isDraggingUp && dragRowBottom < firstRowBottom - firstHeightComparison / 2) {
           newShadow.index = 0;
           newShadow.top = firsrRowTop - rootTop;
-        } else if (dragRowTop >= lastRowBottom - lastHeightComparison / 2) {
+        } else if (!isDraggingUp && dragRowTop >= lastRowBottom - lastHeightComparison / 2) {
           newShadow.index = Object.keys(rowRefs).length - 1;
           newShadow.top = lastRowTop - rootTop;
         }
