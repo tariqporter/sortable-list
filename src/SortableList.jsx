@@ -16,12 +16,19 @@ const useStyles = createUseStyles({
   row: {
     display: 'flex',
     width: '100%',
+    transition: 'all .2s ease-in',
     transitionProperty: 'left, top, width, height, opacity'
   },
   row_dragging: {
+    transition: 'none',
+    position: 'absolute'
   },
   row_notDragging: {
+    position: 'absolute',
     opacity: 0.45
+  },
+  row_transitioning: {
+    position: 'absolute'
   },
   handle: {
     margin: 'auto 0 auto auto',
@@ -68,8 +75,6 @@ const SortablisList = ({
         index,
         style: {
           // top
-          // position
-          // transition
         }
       };
       return acc;
@@ -83,26 +88,24 @@ const SortablisList = ({
   const onStart = useCallback(
     (event, data, id) => {
       let runningTop = 0;
-      const sortedRows = Object.values(rowData).sort(
+      const newRowData = { ...rowData };
+      const sortedRows = Object.values(newRowData).sort(
         (a, b) => a.index - b.index
       );
-
       const rd = sortedRows.reduce((acc, x) => {
         const { top, bottom, height } = rowRefs[x.id].getBoundingClientRect();
         acc[x.id] = { top, bottom, height };
-        rowData[x.id].style.top = runningTop;
-        rowData[x.id].style.position = 'absolute';
+        newRowData[x.id] = {
+          ...newRowData[x.id],
+          style: {
+            ...newRowData[x.id].style,
+            top: runningTop
+          }
+        };
         runningTop += height;
         return acc;
       }, {});
       setRefDimensions(rd);
-
-      requestAnimationFrame(() => {
-        Object.keys(rowData).forEach((k) => {
-          if (k !== id) rowData[k].style.transition = 'all .2s ease-in';
-          else rowData[k].style.transition = 'none';
-        });
-      });
 
       const { width, height: shadowHeight } = rowRefs[
         id
@@ -113,15 +116,15 @@ const SortablisList = ({
       setShadowStyle({
         ...shadowStyle,
         width,
-        top: rowData[id].style.top,
+        top: newRowData[id].style.top,
         height: shadowHeight
       });
       const { top: rt1 } = rootRef.getBoundingClientRect();
       setRootTop(rt1);
       setDragId(id);
-      setRowData({ ...rowData });
+      setRowData(newRowData);
     },
-    [rowRefs, shadowStyle, rowData]
+    [rowRefs, shadowStyle, rowData, rootRef]
   );
 
   const onDrag = useCallback(
@@ -132,9 +135,7 @@ const SortablisList = ({
       const dragRowTop = newTop + rootTop;
       const dragRowBottom = dragRowTop + refDimensions[dragId].height;
       const dragRowHeight = refDimensions[dragId].height;
-
       rowData[dragId].style.top = newTop;
-      rowData[dragId].style.zIndex = 1;
 
       const sortedRows = Object.values(rowData).sort(
         (a, b) => a.index - b.index
@@ -155,10 +156,16 @@ const SortablisList = ({
         const firstHeightComparison = dragRowHeight > firstRowHeight ? firstRowHeight : dragRowHeight;
         const lastHeightComparison = dragRowHeight > lastRowHeight ? lastRowHeight : dragRowHeight;
 
-        if (isDraggingUp && dragRowBottom < firstRowBottom - firstHeightComparison / 2) {
+        if (
+          isDraggingUp
+          && dragRowBottom < firstRowBottom - firstHeightComparison / 2
+        ) {
           newShadow.index = 0;
           newShadow.top = firsrRowTop - rootTop;
-        } else if (!isDraggingUp && dragRowTop >= lastRowBottom - lastHeightComparison / 2) {
+        } else if (
+          !isDraggingUp
+          && dragRowTop >= lastRowBottom - lastHeightComparison / 2
+        ) {
           newShadow.index = Object.keys(rowRefs).length - 1;
           newShadow.top = lastRowTop - rootTop;
         }
@@ -250,7 +257,7 @@ const SortablisList = ({
       });
       setRowData({ ...rowData });
     },
-    [dragId, rowData, shadowStyle, rootRef, rowRefs, shadowIndex, refDimensions]
+    [dragId, rowData, shadowStyle, rowRefs, shadowIndex, refDimensions, rootTop]
   );
 
   const onStop = useCallback(() => {
@@ -259,14 +266,12 @@ const SortablisList = ({
       ...newRowData[dragId],
       style: {
         ...newRowData[dragId].style,
-        top: shadowStyle.top,
-        transition: 'all .2s ease-in'
+        top: shadowStyle.top
       }
     };
     delete newRowData[dragId].style.zIndex;
-
-    setTransitionId(dragId);
     setRowData(newRowData);
+    setTransitionId(dragId);
     setDragId(null);
     setShadowIndex(null);
     setShadowStyle({ ...shadowStyle, height: 0 });
@@ -277,12 +282,7 @@ const SortablisList = ({
       const newIndex = rowData[transitionId].index;
       const newRowData = { ...rowData };
       Object.keys(newRowData).forEach((k) => {
-        const {
-          transition,
-          position,
-          top,
-          ...style
-        } = rowData[k].style;
+        const { top, ...style } = rowData[k].style;
         rowData[k].style = style;
       });
       onReorder(e.nativeEvent, {
@@ -297,8 +297,12 @@ const SortablisList = ({
   );
 
   return (
-    // eslint-disable-next-line no-return-assign
-    <div className={clsx(c.root, classes.root)} ref={(ref) => (rootRef = ref)} {...other}>
+    <div
+      className={clsx(c.root, classes.root)}
+      // eslint-disable-next-line no-return-assign
+      ref={(ref) => (rootRef = ref)}
+      {...other}
+    >
       <div className={clsx(c.shadow, classes.shadow)} style={shadowStyle} />
       {React.Children.map(children, (child) => {
         const id = child.key;
@@ -329,14 +333,19 @@ const SortablisList = ({
                 c.row,
                 classes.row,
                 id === dragId && c.row_dragging,
-                dragId !== null && id !== dragId && c.row_notDragging
+                dragId !== null && id !== dragId && c.row_notDragging,
+                transitionId !== null && c.row_transitioning
               )}
               style={rowData[id].style}
               // eslint-disable-next-line no-return-assign
               ref={(ref) => (rowRefs[id] = ref)}
               onTransitionEnd={(e) => id === transitionId && onTransitionEnd(e)}
             >
-              <div className={clsx(c.contentContainer, classes.contentContainer)}>{clone}</div>
+              <div
+                className={clsx(c.contentContainer, classes.contentContainer)}
+              >
+                {clone}
+              </div>
             </div>
           </DraggableCore>
         );
