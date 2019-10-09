@@ -67,7 +67,7 @@ const SortablisList = ({
         id,
         index,
         style: {
-          top: 0
+          // top
           // position
           // transition
         }
@@ -75,22 +75,6 @@ const SortablisList = ({
       return acc;
     }, {})
   );
-
-  useEffect(() => {
-    if (transitionId === null) {
-      Object.keys(rowData).forEach((k) => {
-        const {
-          transition,
-          position,
-          top,
-          ...style
-        } = rowData[k].style;
-        style.top = 0;
-        rowData[k].style = style;
-      });
-      setRowData({ ...rowData });
-    }
-  }, [transitionId]);
 
   useEffect(() => {
     setComponentIds(React.Children.map(children, (child) => child.key));
@@ -107,6 +91,7 @@ const SortablisList = ({
         const { top, bottom, height } = rowRefs[x.id].getBoundingClientRect();
         acc[x.id] = { top, bottom, height };
         rowData[x.id].style.top = runningTop;
+        rowData[x.id].style.position = 'absolute';
         runningTop += height;
         return acc;
       }, {});
@@ -116,7 +101,6 @@ const SortablisList = ({
         Object.keys(rowData).forEach((k) => {
           if (k !== id) rowData[k].style.transition = 'all .2s ease-in';
           else rowData[k].style.transition = 'none';
-          rowData[k].style.position = 'absolute';
         });
       });
 
@@ -142,10 +126,9 @@ const SortablisList = ({
 
   const onDrag = useCallback(
     (event, data) => {
-      const row = rowData[dragId];
       if (!data.deltaY) return;
       const isDraggingUp = data.deltaY < 0;
-      const newTop = row.style.top + data.deltaY;
+      const newTop = rowData[dragId].style.top + data.deltaY;
       const dragRowTop = newTop + rootTop;
       const dragRowBottom = dragRowTop + refDimensions[dragId].height;
       const dragRowHeight = refDimensions[dragId].height;
@@ -268,18 +251,17 @@ const SortablisList = ({
   );
 
   const onStop = useCallback(() => {
-    const newRowData = {
-      ...rowData,
-      [dragId]: {
-        ...rowData[dragId],
-        style: {
-          ...rowData[dragId].style,
-          top: shadowStyle.top,
-          transition: 'all .2s ease-in'
-        }
+    const newRowData = { ...rowData };
+    newRowData[dragId] = {
+      ...newRowData[dragId],
+      style: {
+        ...newRowData[dragId].style,
+        top: shadowStyle.top,
+        transition: 'all .2s ease-in'
       }
     };
     delete newRowData[dragId].style.zIndex;
+
     setTransitionId(dragId);
     setRowData(newRowData);
     setDragId(null);
@@ -290,10 +272,21 @@ const SortablisList = ({
   const onTransitionEnd = useCallback(
     (e) => {
       const newIndex = rowData[transitionId].index;
+      const newRowData = { ...rowData };
+      Object.keys(newRowData).forEach((k) => {
+        const {
+          transition,
+          position,
+          top,
+          ...style
+        } = rowData[k].style;
+        rowData[k].style = style;
+      });
       onReorder(e.nativeEvent, {
         oldIndex,
         newIndex
       });
+      setRowData(newRowData);
       setTransitionId(null);
       setOldIndex(null);
     },
