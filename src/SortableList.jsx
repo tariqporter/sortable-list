@@ -260,30 +260,17 @@ const SortablisList = ({
     [dragId, rowData, shadowStyle, rowRefs, shadowIndex, refDimensions, rootTop]
   );
 
-  const onStop = useCallback(() => {
-    const newRowData = { ...rowData };
-    newRowData[dragId] = {
-      ...newRowData[dragId],
-      style: {
-        ...newRowData[dragId].style,
-        top: shadowStyle.top
-      }
-    };
-    delete newRowData[dragId].style.zIndex;
-    setRowData(newRowData);
-    setTransitionId(dragId);
-    setDragId(null);
-    setShadowIndex(null);
-    setShadowStyle({ ...shadowStyle, height: 0 });
-  }, [dragId, rowData, shadowStyle]);
-
   const onTransitionEnd = useCallback(
-    (e) => {
-      const newIndex = rowData[transitionId].index;
+    (e, newTransitionId) => {
+      const currentTransitionId = newTransitionId || transitionId;
+      const newIndex = rowData[currentTransitionId].index;
       const newRowData = { ...rowData };
       Object.keys(newRowData).forEach((k) => {
-        const { top, ...style } = rowData[k].style;
-        rowData[k].style = style;
+        const { top, ...style } = newRowData[k].style;
+        newRowData[k] = {
+          ...newRowData[k],
+          style
+        };
       });
       onReorder(e.nativeEvent, {
         oldIndex,
@@ -294,6 +281,30 @@ const SortablisList = ({
       setOldIndex(null);
     },
     [oldIndex, onReorder, rowData, transitionId]
+  );
+
+  const onStop = useCallback(
+    (e) => {
+      const newRowData = { ...rowData };
+      const oldTop = newRowData[dragId].style.top;
+      newRowData[dragId] = {
+        ...newRowData[dragId],
+        style: {
+          ...newRowData[dragId].style,
+          top: shadowStyle.top
+        }
+      };
+      delete newRowData[dragId].style.zIndex;
+      setRowData(newRowData);
+      setTransitionId(dragId);
+      if (oldTop === shadowStyle.top) {
+        onTransitionEnd(e, dragId);
+      }
+      setDragId(null);
+      setShadowIndex(null);
+      setShadowStyle({ ...shadowStyle, height: 0 });
+    },
+    [dragId, rowData, shadowStyle, onTransitionEnd]
   );
 
   return (
