@@ -206,10 +206,11 @@ const SortablisList = ({
       const rows = Object.values(rowData).filter((x) => x.id !== dragId);
       let nextIndex = 0;
       let runningTop = 0;
-      let ordered = rows.sort((a, b) => a.index - b.index);
-      while (ordered.length) {
-        const nextId = ordered[0].id;
-        ordered = ordered.slice(1);
+      const ordered = rows.sort((a, b) => a.index - b.index);
+      let orderIndex = 0;
+      while (orderIndex < ordered.length) {
+        const nextId = ordered[orderIndex].id;
+        orderIndex += 1;
         const { height: nextHeight } = refDimensions[nextId];
         if (nextIndex === newShadow.index) {
           nextIndex += 1;
@@ -224,12 +225,14 @@ const SortablisList = ({
             top: runningTop
           }
         };
-        const crd = newRefDimensions[nextId];
-        newRefDimensions[nextId] = {
-          ...crd,
-          top: crd.top + topDifference,
-          bottom: crd.bottom + topDifference
-        };
+        if (topDifference !== 0) {
+          const crd = newRefDimensions[nextId];
+          newRefDimensions[nextId] = {
+            ...crd,
+            top: crd.top + topDifference,
+            bottom: crd.bottom + topDifference
+          };
+        }
         runningTop += nextHeight;
         nextIndex += 1;
       }

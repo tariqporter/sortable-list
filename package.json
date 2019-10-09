@@ -1,6 +1,6 @@
 {
   "name": "@react-tic/sortable-list",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A react component for re-ordering lists",
   "keywords": [
     "react",
