@@ -144,8 +144,7 @@ const SortablisList = ({
       const newShadow = { index: null, top: null };
       if (refKeys.length) {
         const {
-          top: firsrRowTop,
-          bottom: firstRowBottom,
+          top: firstRowTop,
           height: firstRowHeight
         } = refDimensions[refKeys[0]];
         const {
@@ -158,10 +157,10 @@ const SortablisList = ({
 
         if (
           isDraggingUp
-          && dragRowBottom < firstRowBottom - firstHeightComparison / 2
+          && dragRowBottom < firstRowTop + firstHeightComparison / 2
         ) {
           newShadow.index = 0;
-          newShadow.top = firsrRowTop - rootTop;
+          newShadow.top = firstRowTop - rootTop;
         } else if (
           !isDraggingUp
           && dragRowTop >= lastRowBottom - lastHeightComparison / 2
